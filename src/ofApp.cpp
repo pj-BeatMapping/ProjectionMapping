@@ -1,5 +1,6 @@
 #include "ofApp.h"
-
+int miliNext = 0;
+int milidiff = 500;
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofBackground(255, 255, 255);
@@ -45,23 +46,27 @@ void ofApp::draw(){
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
     if(bg.autoBeat(mili, BPM, margin)){
+        //DrawManyCircle(0, 0, 0, 0);
+        miliNext = mili + milidiff;
+    }
+    
+    //ちゃんとフェードさせるならクラスか配列を作る必要あり
+    if(mili < miliNext){
+        float fade = 1-(mili-miliNext)/milidiff;
+        printf("fade = %f",fade);
+        
+        //複数の円の表示
+        ofSetColor(ofRandom(255*fade), ofRandom(255*fade), ofRandom(255*fade));
+        DrawManyCircle(0, 0, 0, 0);
+        
         //ランダムな色の表示
         ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
         ofDrawRectangle(30, 30, 200, 200);
-        
-        //複数の円の表示
-        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
-        DrawManyCircle(0, 0, 0, 0);
         
         //画像表示
         ofSetColor(255, 255, 255);
         apple.draw(300, 250);
     }
-    
-    
-    
-    
-    
     
     //ここまで
     ofSetColor(100);
