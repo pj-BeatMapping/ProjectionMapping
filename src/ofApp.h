@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxQuadWarp.h"
+#include "BeatGenerator.h"
 
 class ofApp : public ofBaseApp{
     
@@ -13,6 +14,7 @@ public:
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
 
+    void DrawManyCircle(int x1, int x2, int y1, int y2);
     
     bool display;
     bool drawLine;
@@ -28,5 +30,10 @@ public:
     vector<int> hh;
     int mouseCount;
     
+    //擬似心拍用変数
+    float BPM = 80;
+    float margin = 0.2;
+    int flct = 0.3;
+    BeatGenerator bg;
     
 };

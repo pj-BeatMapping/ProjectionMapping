@@ -3,6 +3,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofBackground(255, 255, 255);
+    ofSetBackgroundAuto(false);
     ofSetFrameRate( 60 );
     ofSetVerticalSync( true );
     ofEnableSmoothing();
@@ -11,7 +12,7 @@ void ofApp::setup(){
     drawLine = true;
     apple.load("apple.jpg");//写真の読み込み
     
-    
+    bg = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
 }
 
 //--------------------------------------------------------------
@@ -20,28 +21,46 @@ void ofApp::update(){
     if(ofGetFrameNum()){
         return;
     }
-    
-    
-    
+}
+
+void ofApp::DrawManyCircle(int x1, int x2, int y1, int y2){
+    for(int i=0; i<200; i++){//円のランダム表示
+        int r = ofRandom(10);
+        ofDrawEllipse(ofRandom(250, 650), ofRandom(30, 230), r, r);
+        //ofDrawEllipse(ofRandom(x1, x2), ofRandom(y1, y2), r, r);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     //この中にマッピングされる側のコードを書く
-    ofBackground(255);
+ 
+    //フェードのためにフィルターを重ねる
+    ofSetColor(0, 0, 0, 10); //半透明の黒（背景色）
+    ofRect(0, 0, ofGetWidth(), ofGetHeight()); //画面と同じ大きさの四角形を描画
     
-    //ランダムな色の表示
-    ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
-    ofDrawRectangle(30, 30, 200, 200);
     
-    for(int i=0; i<200; i++){//円のランダム表示
-        int r = ofRandom(10);
-        ofDrawEllipse(ofRandom(250, 650), ofRandom(30, 230), r, r);
+    
+    
+    //ここの条件をOSCが送られてきた時にすればOK
+    int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
+    if(bg.autoBeat(mili, BPM, margin)){
+        //ランダムな色の表示
+        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
+        ofDrawRectangle(30, 30, 200, 200);
+        
+        //複数の円の表示
+        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
+        DrawManyCircle(0, 0, 0, 0);
+        
+        //画像表示
+        ofSetColor(255, 255, 255);
+        apple.draw(300, 250);
     }
     
-    ofSetColor(255, 255, 255);
-    //画像表示
-    apple.draw(300, 250);
+    
+    
+    
     
     
     //ここまで
@@ -82,9 +101,10 @@ void ofApp::draw(){
             warper[i]->draw();
             
             ofSetColor(255);
-            
         }
     }
+    
+
     
 }
 

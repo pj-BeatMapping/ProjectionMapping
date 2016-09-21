@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "844B6074F8F0502487B4D6683DDE735F0E22EDBC",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "F57ECD98FCAA95E9D9DD4D2B4FADD56272907216" : 0,
+    "844B6074F8F0502487B4D6683DDE735F0E22EDBC" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "149243B0-4A43-4E10-9AD5-9F61E23F0683",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "F57ECD98FCAA95E9D9DD4D2B4FADD56272907216" : "HeartBeatController\/",
+    "844B6074F8F0502487B4D6683DDE735F0E22EDBC" : "BeatMapping_oF\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "BeatMapping",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "BeatMapping.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/pj-BeatMapping\/ProjectionMapping.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "844B6074F8F0502487B4D6683DDE735F0E22EDBC"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/pj-BeatMapping\/HeartBeatControllerAkimoto.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F57ECD98FCAA95E9D9DD4D2B4FADD56272907216"
+    }
+  ]
+}
