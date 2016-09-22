@@ -1,6 +1,17 @@
 #include "ofApp.h"
 int miliNext = 0;
 int milidiff = 500;
+
+
+vector<ofFbo *> myfbo;
+vector<ofxQuadWarp *> mywarper;
+vector<int> x;
+vector<int> y;
+vector<int> w;
+vector<int> h;
+
+ofImage entireImage;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofBackground(255, 255, 255);
@@ -14,6 +25,40 @@ void ofApp::setup(){
     apple.load("apple.jpg");//写真の読み込み
     
     bg = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
+    
+    x.push_back(250);
+    y.push_back(30);
+    w.push_back(400);
+    h.push_back(200);
+    
+    x.push_back(30);
+    y.push_back(30);
+    w.push_back(200);
+    h.push_back(200);
+    
+    
+    x.push_back(300);
+    y.push_back(250);
+    w.push_back(200);
+    h.push_back(200);
+    
+    
+    for(int i = 0; i < 3; i ++){
+        
+        ofxQuadWarp kariWarper;
+        mywarper.push_back(new ofxQuadWarp);
+        
+        ofFbo kariFbo;
+        myfbo.push_back(new ofFbo);
+        
+        myfbo[i]->allocate(w[i], h[i]);
+        mywarper[i]->setSourceRect(ofRectangle(0, 0, w[i], h[i]));
+        mywarper[i]->setTopLeftCornerPosition(ofPoint(x[i], 300+y[i]));
+        mywarper[i]->setTopRightCornerPosition(ofPoint(x[i] + w[i], 300+y[i]));
+        mywarper[i]->setBottomLeftCornerPosition(ofPoint(x[i], 300 + y[i] + h[i]));
+        mywarper[i]->setBottomRightCornerPosition(ofPoint(x[i] + w[i], 300 + y[i] + h[i]));
+        mywarper[i]->setup();
+    }
 }
 
 //--------------------------------------------------------------
@@ -35,13 +80,12 @@ void ofApp::DrawManyCircle(int x1, int x2, int y1, int y2){
 //--------------------------------------------------------------
 void ofApp::draw(){
     //この中にマッピングされる側のコードを書く
- 
+    ofBackground(0);
     //フェードのためにフィルターを重ねる
+    entireImage.draw(0,0);
     ofSetColor(0, 0, 0, 10); //半透明の黒（背景色）
     ofRect(0, 0, ofGetWidth(), ofGetHeight()); //画面と同じ大きさの四角形を描画
-    
-    
-    
+
     
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
@@ -56,7 +100,7 @@ void ofApp::draw(){
         printf("fade = %f",fade);
         
         //複数の円の表示
-        ofSetColor(ofRandom(255*fade), ofRandom(255*fade), ofRandom(255*fade));
+        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
         DrawManyCircle(0, 0, 0, 0);
         
         //ランダムな色の表示
@@ -65,8 +109,19 @@ void ofApp::draw(){
         
         //画像表示
         ofSetColor(255, 255, 255);
-        apple.draw(300, 250);
+        apple.draw(300, 250,200,200);
+        
     }
+    
+    vector<ofImage*> kariImage;
+    for(int i=0; i<3; i++){
+        kariImage.push_back(new ofImage);
+        kariImage[i]->grabScreen(x[i], y[i], w[i], h[i]);
+        kariImage[i]->saveImage("test3.png");
+    }
+    
+    
+    entireImage.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
     
     //ここまで
     ofSetColor(100);
@@ -74,8 +129,15 @@ void ofApp::draw(){
     
     for (int i=0; i<img.size(); i++) {
         img[i]->grabScreen(lx[i], ly[i], ww[i], hh[i]);
+        if(i == 1)img[i]->saveImage("test2.png");
+        
+        //ofImage bar;
+        
+        //bar.grabScreen(0,0,ofGetScreenWidth(), ofGetScreenHeight());
+        //bar.saveImage("bar.png");
         if(drawLine){
             ofDrawRectangle(lx[i], ly[i], ww[i], hh[i]);
+            ofDrawRectangle(250, 30, 400, 200);
         }
     }
     
@@ -83,13 +145,35 @@ void ofApp::draw(){
     ofFill();
     
     if (display) {
-        ofBackground(0, 0, 0);
+        ofBackground(0);
+        
+        for(int i=0;i<3;i++){
+            myfbo[i]->begin();
+            kariImage[i]->draw(0, 0);
+            myfbo[i]->end();
+        
+            ofMatrix4x4 mat = mywarper[i]->getMatrix();
+        
+            glPushMatrix();
+            glMultMatrixf(mat.getPtr());
+        {
+            myfbo[i]->draw(0, 0);
+        }
+            glPopMatrix();
+        
+            ofSetColor(100, 100, 100);
+            ofSetLineWidth(2);
+            mywarper[i]->draw();
+            
+            ofSetColor(255,255,255);
+        }
+        
+        
         
         for (int i=0; i<img.size(); i++) {
             
-            fbo[i]->begin();{
-                img[i]->draw(0, 0);
-            }
+            fbo[i]->begin();
+            img[i]->draw(0, 0);
             fbo[i]->end();
             
             ofMatrix4x4 mat = warper[i]->getMatrix();
@@ -105,7 +189,7 @@ void ofApp::draw(){
             ofSetLineWidth(2);
             warper[i]->draw();
             
-            ofSetColor(255);
+            ofSetColor(0,0,0);
         }
     }
     
@@ -124,11 +208,14 @@ void ofApp::keyPressed(int key){
         
     }
     
-    if( key == 's' ){//切り取った領域の保存
+    if( key == 's' ){//切り取った領域の
         for (int i=0; i<img.size(); i++) {
             warper[i]->toggleShow();
+            
         }
-        
+        mywarper[0]->toggleShow();
+        mywarper[1]->toggleShow();
+        mywarper[2]->toggleShow();
         if (drawLine) {
             drawLine = false;
         }else{
