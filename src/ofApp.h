@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxQuadWarp.h"
 #include "BeatGenerator.h"
-#include "MyOSC.h" 
+#include "MyOSC.hpp"
 
 class ofApp : public ofBaseApp{
     
