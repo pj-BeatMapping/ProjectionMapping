@@ -38,7 +38,7 @@ bool BeatGenerator::autoBeat(int mili, float BPM, float margin){
         //play();
         
         
-        printf("BPM = %f, %f\n",(1+margin*(flct-0.5))*BPM,flct);
+        //printf("BPM = %f, %f\n",(1+margin*(flct-0.5))*BPM,flct);
         return true;
     } else return false;
 }

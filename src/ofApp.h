@@ -14,7 +14,8 @@ public:
     void keyPressed(int key);
     void mousePressed(int x, int y, int button);
 
-    void DrawManyCircle(int x1, int x2, int y1, int y2);
+    void DrawManyCircle(int num);
+    void DrawColorfulRect(int num);
     
     bool display;
     bool drawLine;

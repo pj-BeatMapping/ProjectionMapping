@@ -10,7 +10,9 @@ vector<int> y;
 vector<int> w;
 vector<int> h;
 
-ofImage entireImage;
+int mynum = 21; //切り取る領域の数
+
+//ofImage* entireImage = NULL; バグ
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -20,30 +22,41 @@ void ofApp::setup(){
     ofSetVerticalSync( true );
     ofEnableSmoothing();
     
+    //強制フルスク
+    ofToggleFullscreen();
+    
     display = false;
     drawLine = true;
     apple.load("apple.jpg");//写真の読み込み
     
     bg = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
     
-    x.push_back(250);
-    y.push_back(30);
-    w.push_back(400);
-    h.push_back(200);
-    
-    x.push_back(30);
-    y.push_back(30);
-    w.push_back(200);
-    h.push_back(200);
+    int blank = 0; //余白を作るとバグる、なぜ？もしかして領域の幅が何らかの倍数ににならないとうまくいかない？
+    int blankY = 100; //縦方向の余白
+    int width = ofGetWidth()-blank*5;
+    int height = ofGetHeight()-blankY*3;
+    printf("%d,%d", width/4,height/2);
     
     
-    x.push_back(300);
-    y.push_back(250);
-    w.push_back(200);
-    h.push_back(200);
+    for(int i=0; i<4; i++)
+        for(int j=0; j<2; j++){
+            for(int k=0; k<4; k++){
+                
+                if(k!=3){
+                    if(!(j==0&&i==3)){
+                        x.push_back(width/4*i+width/16*k+blank*(i+1));
+                        y.push_back(height/2*j+blankY*(j+1));
+                        w.push_back(width/16);
+                        h.push_back(height/2);
+                    }
+                }
+            
+            //print("%d,%d,%d,%d",)
+            }
+        }
     
     
-    for(int i = 0; i < 3; i ++){
+    for(int i = 0; i < mynum; i ++){
         
         ofxQuadWarp kariWarper;
         mywarper.push_back(new ofxQuadWarp);
@@ -53,10 +66,10 @@ void ofApp::setup(){
         
         myfbo[i]->allocate(w[i], h[i]);
         mywarper[i]->setSourceRect(ofRectangle(0, 0, w[i], h[i]));
-        mywarper[i]->setTopLeftCornerPosition(ofPoint(x[i], 300+y[i]));
-        mywarper[i]->setTopRightCornerPosition(ofPoint(x[i] + w[i], 300+y[i]));
-        mywarper[i]->setBottomLeftCornerPosition(ofPoint(x[i], 300 + y[i] + h[i]));
-        mywarper[i]->setBottomRightCornerPosition(ofPoint(x[i] + w[i], 300 + y[i] + h[i]));
+        mywarper[i]->setTopLeftCornerPosition(ofPoint(x[i], y[i]));
+        mywarper[i]->setTopRightCornerPosition(ofPoint(x[i] + w[i], y[i]));
+        mywarper[i]->setBottomLeftCornerPosition(ofPoint(x[i], y[i] + h[i]));
+        mywarper[i]->setBottomRightCornerPosition(ofPoint(x[i] + w[i], y[i] + h[i]));
         mywarper[i]->setup();
     }
 }
@@ -69,12 +82,18 @@ void ofApp::update(){
     }
 }
 
-void ofApp::DrawManyCircle(int x1, int x2, int y1, int y2){
+void ofApp::DrawManyCircle(int num){
+    ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
     for(int i=0; i<200; i++){//円のランダム表示
         int r = ofRandom(10);
-        ofDrawEllipse(ofRandom(250, 650), ofRandom(30, 230), r, r);
+        ofDrawEllipse(ofRandom(x[num], x[num]+w[num]), ofRandom(y[num], y[num]+h[num]), r, r);
         //ofDrawEllipse(ofRandom(x1, x2), ofRandom(y1, y2), r, r);
     }
+}
+
+void ofApp::DrawColorfulRect(int num){
+    ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
+    ofDrawRectangle(x[num], y[num], w[num], h[num]);
 }
 
 //--------------------------------------------------------------
@@ -82,8 +101,8 @@ void ofApp::draw(){
     //この中にマッピングされる側のコードを書く
     ofBackground(0);
     //フェードのためにフィルターを重ねる
-    entireImage.draw(0,0);
-    ofSetColor(0, 0, 0, 10); //半透明の黒（背景色）
+    //if(entireImage!=NULL)entireImage->draw(0,0);
+    ofSetColor(0, 0, 0, 20); //半透明の黒（背景色）
     ofRect(0, 0, ofGetWidth(), ofGetHeight()); //画面と同じ大きさの四角形を描画
 
     
@@ -96,32 +115,31 @@ void ofApp::draw(){
     
     //ちゃんとフェードさせるならクラスか配列を作る必要あり
     if(mili < miliNext){
-        float fade = 1-(mili-miliNext)/milidiff;
-        printf("fade = %f",fade);
+        float fade = 1-(float)(miliNext-mili)/(float)milidiff;
+        //printf("fade = %f",fade);
         
         //複数の円の表示
-        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
-        DrawManyCircle(0, 0, 0, 0);
+        DrawManyCircle(10); //0-20の番号を入れる
         
         //ランダムな色の表示
-        ofSetColor(ofRandom(255), ofRandom(255), ofRandom(255));
-        ofDrawRectangle(30, 30, 200, 200);
+        DrawColorfulRect(3);
+        
         
         //画像表示
-        ofSetColor(255, 255, 255);
-        apple.draw(300, 250,200,200);
+        //ofSetColor(255, 255, 255);
+        //apple.draw(300, 250,200,200);
         
     }
     
     vector<ofImage*> kariImage;
-    for(int i=0; i<3; i++){
+    for(int i=0; i<mynum; i++){
         kariImage.push_back(new ofImage);
         kariImage[i]->grabScreen(x[i], y[i], w[i], h[i]);
-        kariImage[i]->saveImage("test3.png");
+        //kariImage[i]->saveImage("test3.png");
     }
     
     
-    entireImage.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
+    //entireImage->grabScreen(0, 0, ofGetWidth(), ofGetHeight());
     
     //ここまで
     ofSetColor(100);
@@ -147,7 +165,7 @@ void ofApp::draw(){
     if (display) {
         ofBackground(0);
         
-        for(int i=0;i<3;i++){
+        for(int i=0;i<mynum;i++){
             myfbo[i]->begin();
             kariImage[i]->draw(0, 0);
             myfbo[i]->end();
@@ -209,13 +227,10 @@ void ofApp::keyPressed(int key){
     }
     
     if( key == 's' ){//切り取った領域の
-        for (int i=0; i<img.size(); i++) {
-            warper[i]->toggleShow();
+        for (int i=0; i<mynum; i++) {
+            mywarper[i]->toggleShow();
             
         }
-        mywarper[0]->toggleShow();
-        mywarper[1]->toggleShow();
-        mywarper[2]->toggleShow();
         if (drawLine) {
             drawLine = false;
         }else{
