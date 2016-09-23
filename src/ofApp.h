@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxQuadWarp.h"
 #include "BeatGenerator.h"
+#include "Akimoto.h"
 
 class ofApp : public ofBaseApp{
     

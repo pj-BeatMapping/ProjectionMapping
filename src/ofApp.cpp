@@ -12,7 +12,15 @@ vector<int> h;
 
 int mynum = 21; //切り取る領域の数
 
-//ofImage* entireImage = NULL; バグ
+
+ofVboMesh mesh;
+
+//RandomWalker
+static const int NUM = 500;
+vector<RandomWalkerAkimoto*> walker;
+Akimoto akimoto = *new Akimoto();
+
+//ofImage entireImage = NULL; バグ
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -30,6 +38,7 @@ void ofApp::setup(){
     apple.load("apple.jpg");//写真の読み込み
     
     bg = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
+    
     
     int blank = 0; //余白を作るとバグる、なぜ？もしかして領域の幅が何らかの倍数ににならないとうまくいかない？
     int blankY = 100; //縦方向の余白
@@ -56,6 +65,7 @@ void ofApp::setup(){
         }
     
     
+    
     for(int i = 0; i < mynum; i ++){
         
         ofxQuadWarp kariWarper;
@@ -72,6 +82,12 @@ void ofApp::setup(){
         mywarper[i]->setBottomRightCornerPosition(ofPoint(x[i] + w[i], y[i] + h[i]));
         mywarper[i]->setup();
     }
+    
+    
+    //AkimotoSetup
+    for(int i=0; i<NUM; i++)
+        walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0],h[0]));
+    
 }
 
 //--------------------------------------------------------------
@@ -106,6 +122,8 @@ void ofApp::draw(){
     ofRect(0, 0, ofGetWidth(), ofGetHeight()); //画面と同じ大きさの四角形を描画
 
     
+    
+    
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
     if(bg.autoBeat(mili, BPM, margin)){
@@ -124,6 +142,21 @@ void ofApp::draw(){
         //ランダムな色の表示
         DrawColorfulRect(3);
         
+        //粒子の上行
+        akimoto.RandomWalkerUp(walker);
+        /*
+        mesh.clear();
+        ofSetColor(255,255,255,100);
+        glPointSize(2);
+        for (int i = 0; i < walker.size(); i++) {
+            walker[i].Draw();
+            ofVec3f pos = ofVec3f(walker[i].position.x,
+                                  walker[i].position.y,
+                                  0);
+            mesh.addVertex(pos);
+        }
+        mesh.draw();
+        */
         
         //画像表示
         //ofSetColor(255, 255, 255);

@@ -26,6 +26,7 @@
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
 		D3301F6A0B43BB293ED97C1D /* ofxCvShortImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4DD23693DFAB8EC05FAA5D /* ofxCvShortImage.cpp */; };
 		DBC48FC11D921D6E001C823A /* BeatGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBC48FC01D921D6E001C823A /* BeatGenerator.cpp */; };
+		DBE57A581D9573CA00A79E56 /* Akimoto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBE57A571D9573CA00A79E56 /* Akimoto.cpp */; };
 		E212C821D1064B92DD953A42 /* ofxCvHaarFinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A16CBF2E8CFE43AF54FE6F5 /* ofxCvHaarFinder.cpp */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.cpp */; };
@@ -243,6 +244,8 @@
 		DB8653D6433E14BF06F3EFAF /* cvwimage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = cvwimage.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv/cvwimage.h; sourceTree = SOURCE_ROOT; };
 		DBC48FC01D921D6E001C823A /* BeatGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BeatGenerator.cpp; sourceTree = "<group>"; };
 		DBC48FC21D921D75001C823A /* BeatGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BeatGenerator.h; sourceTree = "<group>"; };
+		DBE57A571D9573CA00A79E56 /* Akimoto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Akimoto.cpp; sourceTree = "<group>"; };
+		DBE57A591D95740B00A79E56 /* Akimoto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Akimoto.h; sourceTree = "<group>"; };
 		DCB56F4E9F44E31D571BC9C4 /* index_testing.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = index_testing.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/index_testing.h; sourceTree = SOURCE_ROOT; };
 		DEA2EDC0AFD59176FDEDC222 /* ofxCvShortImage.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxCvShortImage.h; path = ../../../addons/ofxOpenCv/src/ofxCvShortImage.h; sourceTree = SOURCE_ROOT; };
 		DF49D76C45D5DB505A234880 /* ofxOscMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscMessage.cpp; path = ../../../addons/ofxOsc/src/ofxOscMessage.cpp; sourceTree = SOURCE_ROOT; };
@@ -812,6 +815,8 @@
 				DBC48FC01D921D6E001C823A /* BeatGenerator.cpp */,
 				DBC48FC21D921D75001C823A /* BeatGenerator.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
+				DBE57A571D9573CA00A79E56 /* Akimoto.cpp */,
+				DBE57A591D95740B00A79E56 /* Akimoto.h */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 			);
 			path = src;
@@ -968,6 +973,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBE57A581D9573CA00A79E56 /* Akimoto.cpp in Sources */,
 				DBC48FC11D921D6E001C823A /* BeatGenerator.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
