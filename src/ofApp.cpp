@@ -115,7 +115,7 @@ void ofApp::update(){
         ofxOscMessage OscFFT;
         receiver.getNextMessage(&OscFFT);
         
-        if (OscBeat.getAddress() == "/Fft") {
+        if (OscFFT.getAddress() == "/Fft") {
             lowValue = OscFFT.getArgAsFloat(0);
             midValue = OscFFT.getArgAsFloat(1);
             highValue = OscFFT.getArgAsFloat(2);
