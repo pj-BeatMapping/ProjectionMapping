@@ -11,11 +11,13 @@
 class Morohoshi {
     
 public:
-    void pattern1();
+    void pattern1(int _x, int _y, int _w, int _h, int _beat_detect);
+    void pattern2(int _x, int _y, int _w, int _h,int _beat_detect);
+    void pattern3(int _x, int _y, int _w, int _h,int _beat_detect);
     
-    ofSetColor(0);
-    ofFill();
-    ofRect(x[0],y[0],w[0],h[0]);
+    int x,y,w,h;
+    
+    
     
     
 };

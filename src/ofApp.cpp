@@ -335,13 +335,13 @@ void ofApp::keyPressed(int key){
     
     //モロホシの映像
     if (key == 'x') {
-        morohoshi.pattern1()
+        morohoshi.pattern1(x[0], y[0], w[0], h[0], beat_detect[0]);
            }
     if (key == 'y') {
-        morohoshi.pattern2()
+        morohoshi.pattern2(x[0], y[0], w[0], h[0], beat_detect[0]);
     }
     if (key == 'z') {
-        morohoshi.pattern3()
+        morohoshi.pattern3(x[0], y[0], w[0], h[0], beat_detect[0]);
     }
 
     
