@@ -87,6 +87,9 @@ void ofApp::setup(){
     //AkimotoSetup
     for(int i=0; i<NUM; i++)
         walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0],h[0]));
+    //akimoto.particles = new Particles(10,x[1],y[1],w[1],h[1]);
+    akimoto.PerlinNoiseSetup(x[1],y[1],w[1],h[1]);
+    printf("akimoto = %d,%d,%d,%d",x[1],y[1],w[1],h[1]);
     
 }
 
@@ -96,6 +99,7 @@ void ofApp::update(){
     if(ofGetFrameNum()){
         return;
     }
+    
 }
 
 void ofApp::DrawManyCircle(int num){
@@ -144,6 +148,12 @@ void ofApp::draw(){
         
         //粒子の上行
         akimoto.RandomWalkerUp(walker);
+        
+        
+        //perlin
+        akimoto.PerlinNoiseUpdate();
+        akimoto.PerlinNoiseDraw();
+        
         /*
         mesh.clear();
         ofSetColor(255,255,255,100);
