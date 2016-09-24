@@ -2,17 +2,22 @@
 //  Morohoshi.hpp
 //  ProjectionMapping
 //
-//  Created by 諸星智也 on 2016/09/24.
+//  Created by Ë´∏ÊòüÊô∫‰πü on 2016/09/24.
 //
 //
 
 #include "ofMain.h"
-
+#include "ofxPostGlitch.h"
 class Morohoshi {
     
 public:
+    void setup();
+    void update();
+    void draw();
     void PostGlitch();
+    void keyPressed (int key);
+    void keyReleased (int key);
     
-private:
-    
+    //グリッジ用のインスタンス
+    ofxPostGlitch myGlitch;
 };
