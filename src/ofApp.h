@@ -20,6 +20,7 @@ public:
 
     void DrawManyCircle(int num);
     void DrawColorfulRect(int num);
+    void DrawBlueRect(int num);
     
     bool display;
     bool drawLine;

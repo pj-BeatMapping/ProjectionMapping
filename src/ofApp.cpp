@@ -9,8 +9,8 @@ vector<int> x;
 vector<int> y;
 vector<int> w;
 vector<int> h;
-ofImage kariImage[21];
-int mynum = 21; //切り取る領域の数
+ofImage kariImage[15];
+int mynum = 15; //切り取る領域の数
 
 
 ofVboMesh mesh;
@@ -18,6 +18,10 @@ ofVboMesh mesh;
 //RandomWalker
 static const int NUM = 500;
 vector<RandomWalkerAkimoto*> walker;
+vector<RandomWalkerAkimoto*> walker2;
+vector<RandomWalkerAkimoto*> walker3;
+vector<RandomWalkerAkimoto*> walker4;
+vector<RandomWalkerAkimoto*> walker5;
 Akimoto akimoto = *new Akimoto();
 
 //ofImage entireImage = NULL; バグ
@@ -35,7 +39,7 @@ void ofApp::setup(){
     
     
     //強制フルスク
-    ofToggleFullscreen();
+    //ofToggleFullscreen();
     
     display = false;
     drawLine = true;
@@ -44,24 +48,22 @@ void ofApp::setup(){
     bg = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
     
     
-    int blank = 0; //余白を作るとバグる、なぜ？もしかして領域の幅が何らかの倍数ににならないとうまくいかない？
-    int blankY = 100; //縦方向の余白
-    int width = ofGetWidth()-blank*5;
-    int height = ofGetHeight()-blankY*3;
-    printf("%d,%d", width/4,height/2);
+    int blankX = 20; //余白を作るとバグる、なぜ？もしかして領域の幅が何らかの倍数ににならないとうまくいかない？
+    int blankY = 200; //縦方向の余白
+    int width = ofGetWidth()-blankX*7;
+    int height = ofGetHeight()-blankY*2;
+    //printf("%d,%d", width/5,height);
     
     
-    for(int i=0; i<4; i++)
-        for(int j=0; j<2; j++){
+    for(int i=0; i<5; i++)
+        for(int j=0; j<1; j++){
             for(int k=0; k<4; k++){
                 
                 if(k!=3){
-                    if(!(j==0&&i==3)){
-                        x.push_back(width/4*i+width/16*k+blank*(i+1));
-                        y.push_back(height/2*j+blankY*(j+1));
-                        w.push_back(width/16);
-                        h.push_back(height/2);
-                    }
+                        x.push_back(width/5*i+width/20*k+blankX*(i+1));
+                        y.push_back(height*j+blankY*(j+1));
+                        w.push_back(width/20);
+                        h.push_back(height);
                 }
             
             //print("%d,%d,%d,%d",)
@@ -90,10 +92,11 @@ void ofApp::setup(){
     
     //AkimotoSetup
     
-    for(int i=0; i<NUM; i++)
-        walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0]*3,h[0]));
+    //for(int i=0; i<NUM; i++)
+    //    walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0]*3,h[0]));
+    
     //akimoto.particles = new Particles(10,x[1],y[1],w[1],h[1]);
-    akimoto.PerlinNoiseSetup(x[6],y[6],w[6]*3,h[6]);
+    //akimoto.PerlinNoiseSetup(x[6],y[6],w[6]*3,h[6]);
     
 }
 
@@ -145,25 +148,47 @@ void ofApp::DrawColorfulRect(int num){
     ofDrawRectangle(x[num], y[num], w[num], h[num]);
 }
 
+void ofApp::DrawBlueRect(int num){
+    ofSetColor(ofRandom(0), ofRandom(0), ofRandom(255));
+    ofDrawRectangle(x[num], y[num], w[num]*3, h[num]*3);
+}
 //--------------------------------------------------------------
 void ofApp::draw(){
     //この中にマッピングされる側のコードを書く
     ofBackground(0);
     //フェードのためにフィルターを重ねる
     //if(entireImage!=NULL)entireImage->draw(0,0);
-    ofSetColor(0, 0, 0, 20); //半透明の黒（背景色）
+    ofSetColor(0, 0, 0, 0); //半透明の黒（背景色）
     ofRect(0, 0, ofGetWidth(), ofGetHeight()); //画面と同じ大きさの四角形を描画
-
+    /*
+    //複数の円の表示
+    DrawManyCircle(10); //0-20の番号を入れる
     
+    //ランダムな色の表示
+    DrawColorfulRect(3);
     
+     //perlin
+     akimoto.PerlinNoiseUpdate();
+     akimoto.PerlinNoiseDraw();
+     
+    
+    */
+    //粒子の上行
+    //akimoto.RandomWalkerUp(walker);
+    
+    DrawBlueRect(0);
+    DrawBlueRect(3);
+    DrawBlueRect(6);
+    DrawBlueRect(9);
+    DrawBlueRect(12);
     
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
     if(bg.autoBeat(mili, BPM, margin)){
         //DrawManyCircle(0, 0, 0, 0);
         miliNext = mili + milidiff;
-        for(int i=0; i<NUM; i++)
-            walker[i]->Reset();
+        //for(int i=0; i<NUM; i++)
+            //walker[i]->Reset();
     }
     
     //ちゃんとフェードさせるならクラスか配列を作る必要あり
@@ -171,20 +196,7 @@ void ofApp::draw(){
         float fade = 1-(float)(miliNext-mili)/(float)milidiff;
         //printf("fade = %f",fade);
         
-        //複数の円の表示
-        DrawManyCircle(10); //0-20の番号を入れる
         
-        //ランダムな色の表示
-        DrawColorfulRect(3);
-        
-        
-        //粒子の上行
-        akimoto.RandomWalkerUp(walker);
-        
-        
-        //perlin
-        akimoto.PerlinNoiseUpdate();
-        akimoto.PerlinNoiseDraw();
         
         
     }
