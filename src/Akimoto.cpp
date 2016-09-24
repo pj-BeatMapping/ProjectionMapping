@@ -41,8 +41,8 @@ void RandomWalkerAkimoto::Reset(){
     position.y = y + h;
     
     //移動確率をランダムに
-    left = ofRandom(3, 5.0);
-    right = ofRandom(3, 5.0);
+    left = ofRandom(5, 20.0);
+    right = ofRandom(5, 20.0);
     top = ofRandom(5, 30.0);
     bottom = ofRandom(5, 10.0);
 }
