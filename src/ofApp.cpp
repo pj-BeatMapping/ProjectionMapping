@@ -9,7 +9,7 @@ vector<int> x;
 vector<int> y;
 vector<int> w;
 vector<int> h;
-
+ofImage kariImage[21];
 int mynum = 21; //切り取る領域の数
 
 
@@ -89,11 +89,11 @@ void ofApp::setup(){
     
     
     //AkimotoSetup
+    
     for(int i=0; i<NUM; i++)
         walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0],h[0]));
     //akimoto.particles = new Particles(10,x[1],y[1],w[1],h[1]);
     akimoto.PerlinNoiseSetup(x[1],y[1],w[1],h[1]);
-    printf("akimoto = %d,%d,%d,%d",x[1],y[1],w[1],h[1]);
     
 }
 
@@ -123,10 +123,6 @@ void ofApp::update(){
 
         
     }
-    
-    
-    
-    
     
     
     if(ofGetFrameNum()){
@@ -179,6 +175,7 @@ void ofApp::draw(){
         //ランダムな色の表示
         DrawColorfulRect(3);
         
+        
         //粒子の上行
         akimoto.RandomWalkerUp(walker);
         
@@ -187,30 +184,13 @@ void ofApp::draw(){
         akimoto.PerlinNoiseUpdate();
         akimoto.PerlinNoiseDraw();
         
-        /*
-        mesh.clear();
-        ofSetColor(255,255,255,100);
-        glPointSize(2);
-        for (int i = 0; i < walker.size(); i++) {
-            walker[i].Draw();
-            ofVec3f pos = ofVec3f(walker[i].position.x,
-                                  walker[i].position.y,
-                                  0);
-            mesh.addVertex(pos);
-        }
-        mesh.draw();
-        */
-        
-        //画像表示
-        //ofSetColor(255, 255, 255);
-        //apple.draw(300, 250,200,200);
         
     }
     
-    vector<ofImage*> kariImage;
+    
     for(int i=0; i<mynum; i++){
-        kariImage.push_back(new ofImage);
-        kariImage[i]->grabScreen(x[i], y[i], w[i], h[i]);
+        //kariImage.push_back(new ofImage);
+        kariImage[i].grabScreen(x[i], y[i], w[i], h[i]);
         //kariImage[i]->saveImage("test3.png");
     }
     
@@ -221,20 +201,6 @@ void ofApp::draw(){
     ofSetColor(100);
     ofNoFill();
     
-    for (int i=0; i<img.size(); i++) {
-        img[i]->grabScreen(lx[i], ly[i], ww[i], hh[i]);
-        if(i == 1)img[i]->saveImage("test2.png");
-        
-        //ofImage bar;
-        
-        //bar.grabScreen(0,0,ofGetScreenWidth(), ofGetScreenHeight());
-        //bar.saveImage("bar.png");
-        if(drawLine){
-            ofDrawRectangle(lx[i], ly[i], ww[i], hh[i]);
-            ofDrawRectangle(250, 30, 400, 200);
-        }
-    }
-    
     ofSetColor(255, 255, 255);
     ofFill();
     
@@ -243,9 +209,11 @@ void ofApp::draw(){
         
         for(int i=0;i<mynum;i++){
             myfbo[i]->begin();
-            kariImage[i]->draw(0, 0);
+            kariImage[i].draw(0, 0);
             myfbo[i]->end();
         
+            
+            
             ofMatrix4x4 mat = mywarper[i]->getMatrix();
         
             glPushMatrix();
@@ -286,8 +254,7 @@ void ofApp::draw(){
             ofSetColor(0,0,0);
         }
     }
-    
-
+    //vector<ofImage*>().swap(kariImage);   //←swap技法による解放
     
 }
 

@@ -103,7 +103,7 @@ void Particles::resetOffWalls(){
     float miny = 0;
     float maxx = w;
     float maxy = h;
-    printf("%f, %f, %f, %f\n", minx,miny,maxx,maxy);
+    //printf("%f, %f, %f, %f\n", minx,miny,maxx,maxy);
     
     for(int i = 0; i < positions.size(); i++){
         if (positions[i].x > maxx){
