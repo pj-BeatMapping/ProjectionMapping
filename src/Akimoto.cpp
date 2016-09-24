@@ -10,7 +10,8 @@
 
 Akimoto::Akimoto(){
     //RandomWalker
-    mesh.setMode(OF_PRIMITIVE_POINTS);
+    //mesh.setMode(OF_PRIMITIVE_POINTS);
+    mesh.setMode(OF_PRIMITIVE_LINES);
     
 
 }
@@ -22,6 +23,19 @@ RandomWalkerAkimoto::RandomWalkerAkimoto(int _x, int _y, int _w, int _h){
     y = _y;
     w = _w;
     h = _h;
+    
+    position.x = x + w/2.0;
+    position.y = y + h;
+    
+    //移動確率をランダムに
+    left = ofRandom(3, 5.0);
+    right = ofRandom(3, 5.0);
+    top = ofRandom(5, 30.0);
+    bottom = ofRandom(5, 10.0);
+}
+
+void RandomWalkerAkimoto::Reset(){
+    //初期位置を画面中心に
     
     position.x = x + w/2.0;
     position.y = y + h;

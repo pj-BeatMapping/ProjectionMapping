@@ -162,6 +162,8 @@ void ofApp::draw(){
     if(bg.autoBeat(mili, BPM, margin)){
         //DrawManyCircle(0, 0, 0, 0);
         miliNext = mili + milidiff;
+        for(int i=0; i<NUM; i++)
+            walker[i]->Reset();
     }
     
     //ちゃんとフェードさせるならクラスか配列を作る必要あり

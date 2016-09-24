@@ -16,6 +16,7 @@ public:
     RandomWalkerAkimoto(int _x, int _y, int _w, int _h);
     void update();
     void Draw();
+    void Reset();
     
     ofVec2f position;
     float left, right, top, bottom;
