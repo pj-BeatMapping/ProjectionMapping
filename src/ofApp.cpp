@@ -30,6 +30,10 @@ void ofApp::setup(){
     ofSetVerticalSync( true );
     ofEnableSmoothing();
     
+    //OSC
+    receiver.setup(PORT);
+    
+    
     //強制フルスク
     ofToggleFullscreen();
     
@@ -95,6 +99,35 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+    //OSCの受信
+    while (receiver.hasWaitingMessages()) {
+        //心拍情報の受信
+        ofxOscMessage OscBeat;
+        receiver.getNextMessage(&OscBeat);
+        
+        if (OscBeat.getAddress() == "/Beat") {
+            for(int i = 0; i < 7 ; i++){
+                 beat_detect[i] =  OscBeat.getArgAsInt32(i);
+            }
+        }
+        //FFTの解析データの受信
+        ofxOscMessage OscFFT;
+        receiver.getNextMessage(&OscFFT);
+        
+        if (OscBeat.getAddress() == "/Fft") {
+            lowValue = OscFFT.getArgAsFloat(0);
+            midValue = OscFFT.getArgAsFloat(1);
+            highValue = OscFFT.getArgAsFloat(2);
+            }
+
+        
+    }
+    
+    
+    
+    
+    
     
     if(ofGetFrameNum()){
         return;

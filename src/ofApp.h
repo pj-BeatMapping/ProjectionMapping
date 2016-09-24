@@ -6,6 +6,8 @@
 #include "Akimoto.h"
 #include "ofxOsc.h"
 
+#define PORT 8000//自分のポート番号
+
 class ofApp : public ofBaseApp{
     
 public:
@@ -40,4 +42,10 @@ public:
     BeatGenerator bg;
     
     //OSC
+    ofxOscReceiver receiver;
+    //受信した心拍情報
+    int beat_detect[7];
+    //受信したFFT情報
+    float lowValue,midValue,highValue;
+    
 };
