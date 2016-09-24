@@ -4,6 +4,7 @@
 #include "ofxQuadWarp.h"
 #include "BeatGenerator.h"
 #include "Akimoto.h"
+#include "ofxOsc.h"
 
 class ofApp : public ofBaseApp{
     
@@ -38,4 +39,5 @@ public:
     int flct = 0.3;
     BeatGenerator bg;
     
+    //OSC
 };
