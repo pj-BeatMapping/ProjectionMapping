@@ -92,8 +92,16 @@ void ofApp::setup(){
     
     //AkimotoSetup
     
-    //for(int i=0; i<NUM; i++)
-    //    walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0]*3,h[0]));
+    for(int i=0; i<NUM; i++)
+        walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0]*3,h[0]));
+    for(int i=0; i<NUM; i++)
+        walker2.push_back(new RandomWalkerAkimoto(x[6],y[6],w[0]*3,h[0]));
+    for(int i=0; i<NUM; i++)
+        walker3.push_back(new RandomWalkerAkimoto(x[3],y[3],w[0]*3,h[0]));
+    for(int i=0; i<NUM; i++)
+        walker4.push_back(new RandomWalkerAkimoto(x[9],y[9],w[0]*3,h[0]));
+    for(int i=0; i<NUM; i++)
+        walker5.push_back(new RandomWalkerAkimoto(x[12],y[12],w[0]*3,h[0]));
     
     //akimoto.particles = new Particles(10,x[1],y[1],w[1],h[1]);
     //akimoto.PerlinNoiseSetup(x[6],y[6],w[6]*3,h[6]);
@@ -174,14 +182,21 @@ void ofApp::draw(){
     
     */
     //粒子の上行
-    //akimoto.RandomWalkerUp(walker);
     
+    akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_LINES);
+    akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_POINTS);
+    akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_TRIANGLES);
+    akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_POINTS,10);
+    akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_POINTS,20);
+    
+    /*
     DrawBlueRect(0);
     DrawBlueRect(3);
     DrawBlueRect(6);
     DrawBlueRect(9);
     DrawBlueRect(12);
-    
+    */
+     
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
     if(bg.autoBeat(mili, BPM, margin)){

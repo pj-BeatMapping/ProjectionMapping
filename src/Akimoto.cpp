@@ -11,7 +11,7 @@
 Akimoto::Akimoto(){
     //RandomWalker
     //mesh.setMode(OF_PRIMITIVE_POINTS);
-    mesh.setMode(OF_PRIMITIVE_LINES);
+    //mesh.setMode(OF_PRIMITIVE_LINES);
     
 
 }
@@ -43,14 +43,20 @@ void RandomWalkerAkimoto::Reset(){
     //移動確率をランダムに
     left = ofRandom(5, 20.0);
     right = ofRandom(5, 20.0);
-    top = ofRandom(5, 30.0);
-    bottom = ofRandom(5, 10.0);
+    top = ofRandom(0, 30.0);
+    bottom = ofRandom(0, 0.0);
 }
 
 void RandomWalkerAkimoto::Draw(){
     //上下左右同じ確率でランダムに移動
+    
+    int diff = ofRandom(-top, bottom);
     position.x += ofRandom(-left, right);
-    position.y += ofRandom(-top, bottom);
+    position.y += diff;
+    
+    float rate = (float)(diff+top)/(float)(top+bottom);
+    //printf("%f",rate);
+    ofSetColor(255.0*(rate/2.0),255.0*(rate/2.0),255.0,100);
     
     
     // 画面からはみ出たら、反対側から出現
@@ -70,11 +76,26 @@ void RandomWalkerAkimoto::Draw(){
     
 }
 
-void Akimoto::RandomWalkerUp(vector<RandomWalkerAkimoto*> walker){
-    //mesh.setMode(OF_PRIMITIVE_POINTS);
+void Akimoto::RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode){
+    mesh.setMode(mode);
     mesh.clear();
     ofSetColor(255,255,255,100);
-    glPointSize(2);
+    glPointSize(5);
+    for (int i = 0; i < walker.size(); i++) {
+        walker[i]->Draw();
+        ofVec3f pos = ofVec3f(walker[i]->position.x,
+                              walker[i]->position.y,
+                              0);
+        mesh.addVertex(pos);
+    }
+    mesh.draw();
+}
+
+void Akimoto::RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode, int size){
+    mesh.setMode(mode);
+    mesh.clear();
+    ofSetColor(255,255,255,100);
+    glPointSize(size);
     for (int i = 0; i < walker.size(); i++) {
         walker[i]->Draw();
         ofVec3f pos = ofVec3f(walker[i]->position.x,

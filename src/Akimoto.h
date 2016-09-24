@@ -59,7 +59,8 @@ public:
     Akimoto();
     
     //RandomWalker
-    void RandomWalkerUp(vector<RandomWalkerAkimoto*> walker);
+    void RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode);
+    void RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode, int size);
     ofVboMesh mesh;
     
     
