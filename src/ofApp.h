@@ -5,6 +5,7 @@
 #include "BeatGenerator.h"
 #include "Akimoto.h"
 #include "ofxOsc.h"
+#include "Morohoshi.hpp"
 
 #define PORT 8000//自分のポート番号
 
@@ -48,5 +49,8 @@ public:
     int beat_detect[7];
     //受信したFFT情報
     float lowValue,midValue,highValue;
+    
+    Morohoshi morohoshi;
+    
     
 };

@@ -11,13 +11,11 @@
 class Morohoshi {
     
 public:
-    void setup();
-    void update();
-    void draw();
-    void PostGlitch();
-    void keyPressed (int key);
-    void keyReleased (int key);
+    void pattern1();
     
-    //グリッジ用のインスタンス
-    ofxPostGlitch myGlitch;
+    ofSetColor(0);
+    ofFill();
+    ofRect(x[0],y[0],w[0],h[0]);
+    
+    
 };

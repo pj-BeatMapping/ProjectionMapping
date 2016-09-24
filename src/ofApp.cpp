@@ -332,6 +332,19 @@ void ofApp::keyPressed(int key){
         mouseCount = 0;
     }
     
+    
+    //モロホシの映像
+    if (key == 'x') {
+        morohoshi.pattern1()
+           }
+    if (key == 'y') {
+        morohoshi.pattern2()
+    }
+    if (key == 'z') {
+        morohoshi.pattern3()
+    }
+
+    
 }
 
 
