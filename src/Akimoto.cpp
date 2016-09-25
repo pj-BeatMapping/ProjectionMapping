@@ -16,6 +16,178 @@ Akimoto::Akimoto(){
 
 }
 
+Spectrum::Spectrum(){}
+
+Spectrum::Spectrum(int _x, int _y, int _w, int _h){
+    x = _x;
+    y = _y;
+    w = _w;
+    h = _h;
+}
+
+void Spectrum::draw(int milidiff, int milimax){
+    //10段
+    int num = 10;
+    int blank = 5;//余白
+    
+    int spWidth = w-blank*2;
+    int spHeight = (h-(num+2)*blank)/10;
+    
+    int upDownHeight;
+    
+    float rate = (float)milidiff/(float)milimax;
+    
+    rate *= rate;
+    if(0 < rate && rate < 1){
+        if(rate > 0.5){ //1~0.5は上にあがる
+            rate = (-rate+1.0)*2.0;
+        } else { //0.5~0は下がる
+            rate = (rate)*2.0;
+        }
+    } else rate = 1;
+    //printf("why %d",int(num*rate));
+    ofSetColor(255);
+    for(int i=0; i<int(num*rate); i++){
+        //ofDrawRectangle(x, y, w, h);
+        ofDrawRectangle(x+blank,y+h-(spHeight*(i+1)+blank*(i+1)),spWidth,spHeight);
+    
+    }
+    
+}
+
+Compo::Compo(){}
+
+Compo::Compo(int _x, int _y, int _w, int _h){
+    x = _x;
+    y = _y;
+    w = _w;
+    h = _h;
+}
+
+void Compo::draw(int milidiff, int milimax){
+    //5段
+    int num = 5;
+    int blank = w-h/5;//余白
+    
+    int spWidth = h/5;
+    int spHeight = h/5;
+    
+    int upDownHeight;
+    
+    float rate = (float)milidiff/(float)milimax;
+    
+    rate *= rate;
+    if(0 < rate && rate < 1){
+        if(rate > 0.5){ //1~0.5は上にあがる
+            rate = (-rate+1.0)*2.0;
+        } else { //0.5~0は下がる
+            rate = (rate)*2.0;
+        }
+    } else rate = 1;
+    
+    //printf("why %d",int(num*rate));
+    ofSetColor(255);
+    for(int i=0; i<int(num*rate); i++){
+        //ofDrawRectangle(x, y, w, h);
+        ofEllipse(x+w/2, y+h-(h/10+h/5*i), w/2, h/5);
+        
+    }
+    
+}
+
+void Compo::draw(int milidiff, int milimax, float lowVal, float midVal, float highVal){
+    //5段
+    int num = 5;
+    int blank = w-h/5;//余白
+    
+    int spWidth = h/5;
+    int spHeight = h/5;
+    
+    int upDownHeight;
+    
+    float rate = (float)milidiff/(float)milimax;
+    
+    rate *= rate;
+    if(0 < rate && rate < 1){
+        if(rate > 0.5){ //1~0.5は上にあがる
+            rate = (-rate+1.0)*2.0;
+        } else { //0.5~0は下がる
+            rate = (rate)*2.0;
+        }
+    } else rate = 1;
+    
+    //printf("why %d",int(num*rate));
+    ofSetColor(255);
+    for(int i=0; i<int(num*rate); i++){
+        //ofDrawRectangle(x, y, w, h);
+        //ofEllipse(x+w/2, y+h-(h/10+h/5*i), w/2, h/5);
+        ofSetColor(lowVal, midVal, highVal,50);
+        ofFill();
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), lowVal);
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), midVal);
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), highVal);
+    }
+    
+}
+
+void Compo::tripleDraw(int milidiff, int milimax){
+    //5段
+    int num = 5;
+    int blank = w-h/5;//余白
+    
+    int spWidth = h/5;
+    int spHeight = h/5;
+    
+    int upDownHeight;
+    
+    float rate = (float)milidiff/(float)milimax;
+    
+    rate *= rate;
+    if(0 < rate && rate < 1){
+        if(rate > 0.5){ //1~0.5は上にあがる
+            rate = (-rate+1.0)*2.0;
+        } else { //0.5~0は下がる
+            rate = (rate)*2.0;
+        }
+    } else rate = 1;
+    
+    //printf("why %d",int(num*rate));
+    ofSetColor(255);
+    for(int i=0; i<int(num*rate); i++){
+        //ofDrawRectangle(x, y, w, h);
+        //ofEllipse(x+w/2, y+h-(h/10+h/5*i), w/2, h/5);
+        ofSetColor(255, 255, 255, 50);
+        ofFill();
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), 30);
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), 100);
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), 50);
+    }
+    
+}
+
+
+void Compo::tripleDraw(int milidiff, int milimax, float lowVal, float midVal, float highVal){
+    //5段
+    int num = 5;
+    int blank = w-h/5;//余白
+    
+    int spWidth = h/5;
+    int spHeight = h/5;
+    
+    //printf("why %d",int(num*rate));
+    ofSetColor(255);
+    for(int i=0; i<num; i++){
+        //ofDrawRectangle(x, y, w, h);
+        //ofEllipse(x+w/2, y+h-(h/10+h/5*i), w/2, h/5);
+        ofSetColor(lowVal, midVal, highVal,50);
+        ofFill();
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), lowVal);
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), midVal);
+        ofCircle(x+w/2, y+h-(h/10+h/5*i), highVal);
+    }
+    
+}
+
 //RandomWalker
 RandomWalkerAkimoto::RandomWalkerAkimoto(int _x, int _y, int _w, int _h){
     //初期位置を画面中心に

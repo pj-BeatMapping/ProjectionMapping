@@ -53,6 +53,24 @@ public:
     int x,y,w,h;
 };
 
+class Spectrum{
+public:
+    Spectrum();
+    Spectrum(int _x, int _y, int _w, int _h);
+    void draw(int milidiff, int milimax);
+    int x,y,w,h;
+};
+
+class Compo{
+public:
+    Compo();
+    Compo(int _x, int _y, int _w, int _h);
+    void draw(int milidiff, int milimax);
+    void draw(int milidiff, int milimax, float lowVal, float midVal, float highVal);
+    void tripleDraw(int milidiff, int milimax);
+    void tripleDraw(int milidiff, int milimax, float lowVal, float midVal, float highVal);
+    int x,y,w,h;
+};
 
 class Akimoto {
     

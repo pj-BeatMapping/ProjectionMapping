@@ -1,7 +1,7 @@
 #include "ofApp.h"
 int miliNext[5]{0,0,0,0,0};
 int milidiff = 1000;
-
+int SliderCounter = 0;
 
 vector<ofFbo *> myfbo;
 vector<ofxQuadWarp *> mywarper;
@@ -11,7 +11,8 @@ vector<int> w;
 vector<int> h;
 ofImage kariImage[15];
 int mynum = 15; //切り取る領域の数
-
+int nowKey;
+int humanBeatCounter = 0;
 
 ofVboMesh mesh;
 
@@ -22,6 +23,8 @@ vector<RandomWalkerAkimoto*> walker2;
 vector<RandomWalkerAkimoto*> walker3;
 vector<RandomWalkerAkimoto*> walker4;
 vector<RandomWalkerAkimoto*> walker5;
+Spectrum sp[15];
+Compo cp[15];
 Akimoto akimoto = *new Akimoto();
 
 //ofImage entireImage = NULL; バグ
@@ -109,6 +112,10 @@ void ofApp::setup(){
     for(int i=0; i<NUM; i++)
         walker5.push_back(new RandomWalkerAkimoto(x[12],y[12],w[0]*3,h[0]));
     
+    for(int i=0;i<15;i++){
+        sp[i] = *new Spectrum(x[i],y[i],w[i],h[i]);
+        cp[i] = *new Compo(x[i],y[i],w[i],h[i]);
+    }
     //akimoto.particles = new Particles(10,x[1],y[1],w[1],h[1]);
     //akimoto.PerlinNoiseSetup(x[6],y[6],w[6]*3,h[6]);
     
@@ -199,7 +206,9 @@ void ofApp::draw(){
     DrawBlueRect(9);
     DrawBlueRect(12);
     */
-     
+    
+    
+    
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
     for(int i=0; i<5; i++){
@@ -209,23 +218,163 @@ void ofApp::draw(){
         //for(int i=0; i<NUM; i++)
         //walker[i]->Reset();
         }
-        
+        if(nowKey == 'z'){
         if(mili < miliNext[i]){
             float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
             //printf("fade = %f",fade);
             if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
-            if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_POINTS,5,miliNext[i]-mili, milidiff);
-            if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_TRIANGLES,10,miliNext[i]-mili, milidiff);
-            if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_POINTS,10,miliNext[i]-mili, milidiff);
-            if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_POINTS,20, miliNext[i]-mili, milidiff);
+            if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_LINES,5,miliNext[i]-mili, milidiff);
+            if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
+            if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
+            if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_LINES,20, miliNext[i]-mili, milidiff);
             
             
+        }
+        }
+        
+        if(nowKey == 'x'){
+            if(mili < miliNext[i]){
+                float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
+                //printf("fade = %f",fade);
+                if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
+                if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
+                if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
+                if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
+                if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_POINTS,20, miliNext[i]-mili, milidiff);
+                
+                
+            }
+        }
+        
+        if(nowKey == 'c'){
+            if(mili < miliNext[i]){
+                float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
+                //printf("fade = %f",fade);
+                if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
+                if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
+                if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
+                if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
+                if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_TRIANGLES,20, miliNext[i]-mili, milidiff);
+                
+                
+            }
+        }
+        
+        if(nowKey == 'v'){
+            if(i==0){
+                for(int j=0; j<3; j++)
+                sp[i*3+j].draw(miliNext[i]-mili, milidiff);
+            }
+            if(i==1){
+                for(int j=0; j<3; j++)
+                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
+            }
+            if(i==2){
+                for(int j=0; j<3; j++)
+                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
+            }
+            if(i==3){
+                for(int j=0; j<3; j++)
+                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
+            }
+            if(i==4){
+                for(int j=0; j<3; j++)
+                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
+            }
+        }
+        
+        if(nowKey == 'b'){
+            if(i==0){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
+            }
+            if(i==1){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
+            }
+            if(i==2){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
+            }
+            if(i==3){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
+            }
+            if(i==4){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
+            }
+        }
+        
+        if(nowKey == 'n'){
+            if(i==0){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff, lowValue, midValue, highValue);
+            }
+            if(i==1){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
+            }
+            if(i==2){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
+            }
+            if(i==3){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
+            }
+            if(i==4){
+                for(int j=0; j<3; j++)
+                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
+            }
         }
     }
     
     //ちゃんとフェードさせるならクラスか配列を作る必要あり
     
     
+    //入力した時の演出, 4に成ったら終わる？
+    if(beat_detect[0] > 0){
+        //円が徐々に大きくなるクラスを作成
+        ofDrawCircle(ofGetWidth()/2, ofGetHeight(), 30);
+    }
+    
+
+    
+    if(nowKey == 'm'){
+        ofSetColor(255);
+        SliderCounter++;
+        
+        int p = 10;
+        int p2 = SliderCounter/20;
+        if(p > p2) p = p - p2;
+        else p = 1;
+        
+        int sliderCount = SliderCounter%(10*p);
+        if(sliderCount > 8*p){
+            ofDrawRectangle(x[0], y[0], w[0]*3, h[0]);
+        } else if(sliderCount > 6*p){
+            ofDrawRectangle(x[3], y[3], w[3]*3, h[3]);
+        } else if(sliderCount > 4*p){
+            ofDrawRectangle(x[6], y[6], w[3]*3, h[3]);
+        } else if(sliderCount > 2*p){
+            ofDrawRectangle(x[9], y[9], w[3]*3, h[3]);
+        } else {
+            ofDrawRectangle(x[12], y[12], w[3]*3, h[3]);
+        }
+        
+    } else {
+        SliderCounter = 0;
+    }
+    
+    //枠を付ける,y軸がうまくいってない気がする
+    ofSetColor(0,150);
+    for(int i=0; i<mynum; i++){
+        ofDrawRectangle(x[i]-2,y[i]-2,4,y[i]+h[i]);
+        ofDrawRectangle(x[i]-2,y[i]-2,x[i]+w[i],4);
+        ofDrawRectangle(x[i]+w[i]-2,y[i]-2,4,y[i]+h[i]);
+        ofDrawRectangle(x[i]-2,y[i]+h[i]-2,x[i]+w[i],4);
+    }
     
     for(int i=0; i<mynum; i++){
         //kariImage.push_back(new ofImage);
@@ -359,11 +508,23 @@ void ofApp::keyPressed(int key){
     }
     
     
+    //演出切りかえ
+    if(key == 'z' || key == 'x' || key == 'c' || key == 'v' || key == 'b' || key == 'n' || key == 'm'){
+        //z -> line
+        //x -> point
+        //c -> triangle
+        //v -> rect spectrum
+        //b -> circle spectrum
+        //n -> fft circle
+        //m -> slider
+        nowKey = key;
+    }
+    
     //グリッジ
     if (key == '1') {
         for(int i = 0 ; i < 15;i++){
             myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, true);
-            cout << "グリッジ！！" << endl;
+            //cout << "グリッジ！！" << endl;
         }
     }
     if (key == '2') {
