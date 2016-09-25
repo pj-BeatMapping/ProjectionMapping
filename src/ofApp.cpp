@@ -212,7 +212,7 @@ void ofApp::draw(){
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
     for(int i=0; i<5; i++){
-        if(bg[i].autoBeat(mili, BPM, margin)){
+        if(beat_detect[i] == 1/*bg[i].autoBeat(mili, BPM, margin)*/){
         //DrawManyCircle(0, 0, 0, 0);
             miliNext[i] = mili + milidiff;
         //for(int i=0; i<NUM; i++)
@@ -336,6 +336,7 @@ void ofApp::draw(){
     //入力した時の演出, 4に成ったら終わる？
     if(beat_detect[0] > 0){
         //円が徐々に大きくなるクラスを作成
+        ofSetColor(255);
         ofDrawCircle(ofGetWidth()/2, ofGetHeight(), 30);
     }
     
