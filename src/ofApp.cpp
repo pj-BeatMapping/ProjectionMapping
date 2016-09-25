@@ -38,6 +38,7 @@ void ofApp::setup(){
     receiver.setup(PORT);
     
     
+    
     //強制フルスク
     //ofToggleFullscreen();
     
@@ -90,6 +91,10 @@ void ofApp::setup(){
         mywarper[i]->setBottomLeftCornerPosition(ofPoint(x[i], y[i] + h[i]));
         mywarper[i]->setBottomRightCornerPosition(ofPoint(x[i] + w[i], y[i] + h[i]));
         mywarper[i]->setup();
+        //===================================================変更============================================
+        //グリッジ
+        myGlitch[i].setup(myfbo[i]);
+        //===================================================変更============================================
     }
     
     
@@ -165,6 +170,7 @@ void ofApp::DrawBlueRect(int num){
 }
 //--------------------------------------------------------------
 void ofApp::draw(){
+    
     //この中にマッピングされる側のコードを書く
     ofBackground(0);
     //フェードのためにフィルターを重ねる
@@ -174,6 +180,7 @@ void ofApp::draw(){
     /*
     //複数の円の表示
     DrawManyCircle(10); //0-20の番号を入れる
+     
     
     //ランダムな色の表示
     DrawColorfulRect(3);
@@ -189,6 +196,7 @@ void ofApp::draw(){
     
     
     
+    
     /*
     DrawBlueRect(0);
     DrawBlueRect(3);
@@ -196,6 +204,14 @@ void ofApp::draw(){
     DrawBlueRect(9);
     DrawBlueRect(12);
     */
+    //===================================================変更============================================
+    /*for(int i = 0 ; i < 15;i++){
+         //Apply effects
+        myGlitch[i].generateFx();
+    }*/
+    //===================================================変更============================================
+
+    
      
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
@@ -255,12 +271,17 @@ void ofApp::draw(){
             glPushMatrix();
             glMultMatrixf(mat.getPtr());
         {
-            myfbo[i]->draw(0, 0);
+            //========================ヘンコウ===================
+            myGlitch[i].generateFx();
+            //========================ヘンコウ===================
+
+           cd myfbo[i]->draw(0, 0);
         }
             glPopMatrix();
         
             ofSetColor(100, 100, 100);
             ofSetLineWidth(2);
+            myGlitch[i].generateFx();
             mywarper[i]->draw();
             
             ofSetColor(255,255,255);
@@ -279,7 +300,7 @@ void ofApp::draw(){
             glPushMatrix();
             glMultMatrixf(mat.getPtr());
             {
-                fbo[i]->draw(0, 0);
+               fbo[i]->draw(0, 0);
             }
             glPopMatrix();
             
@@ -291,6 +312,7 @@ void ofApp::draw(){
         }
     }
     //vector<ofImage*>().swap(kariImage);   //←swap技法による解放
+
     
 }
 
@@ -355,19 +377,117 @@ void ofApp::keyPressed(int key){
     }
     
     
-    //モロホシの映像
-    if (key == 'x') {
-        morohoshi.pattern1(x[0], y[0], w[0], h[0], beat_detect[0]);
-           }
-    if (key == 'y') {
-        morohoshi.pattern2(x[0], y[0], w[0], h[0], beat_detect[0]);
+    //===================================================変更============================================
+    if (key == '1') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, true);
+            cout << "グリッジ！！" << endl;
+        }
     }
-    if (key == 'z') {
-        morohoshi.pattern3(x[0], y[0], w[0], h[0], beat_detect[0]);
+    if (key == '2') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_GLOW			, true);
+        }
+    }
+    if (key == '3') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SHAKER			, true);
+        }
+    }
+    if (key == '4') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CUTSLIDER		, true);
+        }
+    }
+    if (key == '5') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_TWIST			, true);
+        }
+    }
+    if (key == '6') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_OUTLINE		, true);
+        }
+    }
+    if (key == '7') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_NOISE			, true);
+        }
+    }
+    if (key == '8') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SLITSCAN		, true);
+        }
+    }
+    if (key == '9') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SWELL			, true);
+        }
+    }
+    if (key == '0') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_INVERT			, true);
+        }
+    }
+    //===================================================変更============================================
+
+    }
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key){
+    if (key == '1') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, false);
+        }
+    }
+    if (key == '2') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_GLOW			, false);
+        }
+    }
+    if (key == '3') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SHAKER			, false);
+        }
+    }
+    if (key == '4') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CUTSLIDER		, false);
+        }
+    }
+    if (key == '5') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_TWIST			, false);
+        }
+    }
+    if (key == '6') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_OUTLINE		, false);
+        }
+    }
+    if (key == '7') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_NOISE			, false);
+        }
+    }
+    if (key == '8') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SLITSCAN		, false);
+        }
+    }
+    if (key == '9') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SWELL			, false);
+        }
+    }
+    if (key == '0') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_INVERT			, false);
+        }
     }
 
     
 }
+
 
 
 //--------------------------------------------------------------
