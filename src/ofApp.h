@@ -41,7 +41,7 @@ public:
     float BPM = 80;
     float margin = 0.2;
     int flct = 0.3;
-    BeatGenerator bg;
+    BeatGenerator bg[5];
     
     //OSC
     ofxOscReceiver receiver;

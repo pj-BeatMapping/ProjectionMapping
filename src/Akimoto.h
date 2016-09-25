@@ -17,6 +17,7 @@ public:
     void update();
     void Draw();
     void Reset();
+    void UpDownDraw(int milidiff, int milimax);
     
     ofVec2f position;
     float left, right, top, bottom;
@@ -61,6 +62,7 @@ public:
     //RandomWalker
     void RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode);
     void RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode, int size);
+    void RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode, int size, int milidiff, int milimax);
     ofVboMesh mesh;
     
     

@@ -72,8 +72,45 @@ void RandomWalkerAkimoto::Draw(){
     if (position.y > y+h) {
         position.y = y+h;
     }
+}
+
+void RandomWalkerAkimoto::UpDownDraw(int milidiff, int milimax){
+    //上下左右同じ確率でランダムに移動
     
+    int diff = ofRandom(-top, bottom);
+    position.x += ofRandom(-left, right);
+    position.y += diff;
     
+    float rate = (float)(diff+top)/(float)(top+bottom);
+    //printf("%f",rate);
+    ofSetColor(255.0*(rate/2.0),255.0*(rate/2.0),255.0,100);
+    
+    int upDownHeight;
+    
+    rate = (float)milidiff/(float)milimax;
+    
+    rate *= rate;
+    if(0 < rate && rate < 1){
+        if(rate > 0.5){ //1~0.5は上にあがる
+            upDownHeight = (-rate+1.0)*2.0*(h);
+        } else { //0.5~0は下がる
+        upDownHeight = (rate)*2.0*(h);
+        }
+    }
+    
+    // 画面からはみ出たら、反対側から出現
+    if (position.x < x) {
+        position.x = x+w;
+    }
+    if (position.x > x+w) {
+        position.x = x;
+    }
+    if (position.y < y+h-upDownHeight) {
+        position.y = y+h;
+    }
+    if (position.y > y+h) {
+        position.y = y+h-upDownHeight;
+    }
 }
 
 void Akimoto::RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode){
@@ -97,7 +134,24 @@ void Akimoto::RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMod
     ofSetColor(255,255,255,100);
     glPointSize(size);
     for (int i = 0; i < walker.size(); i++) {
+        
         walker[i]->Draw();
+        ofVec3f pos = ofVec3f(walker[i]->position.x,
+                              walker[i]->position.y,
+                              0);
+        mesh.addVertex(pos);
+    }
+    mesh.draw();
+}
+
+void Akimoto::RandomWalkerUp(vector<RandomWalkerAkimoto*> walker, ofPrimitiveMode mode, int size, int milidiff, int milimax){
+    mesh.setMode(mode);
+    mesh.clear();
+    ofSetColor(255,255,255,100);
+    glPointSize(size);
+    for (int i = 0; i < walker.size(); i++) {
+        
+        walker[i]->UpDownDraw(milidiff, milimax);
         ofVec3f pos = ofVec3f(walker[i]->position.x,
                               walker[i]->position.y,
                               0);

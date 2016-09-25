@@ -1,6 +1,6 @@
 #include "ofApp.h"
-int miliNext = 0;
-int milidiff = 500;
+int miliNext[5]{0,0,0,0,0};
+int milidiff = 1000;
 
 
 vector<ofFbo *> myfbo;
@@ -45,8 +45,11 @@ void ofApp::setup(){
     drawLine = true;
     apple.load("apple.jpg");//写真の読み込み
     
-    bg = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
-    
+    //BeatGeneratorSetup
+    for(int i=0; i<5; i++){
+        bg[i] = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
+        BPM += 4;
+    }
     
     int blankX = 20; //余白を作るとバグる、なぜ？もしかして領域の幅が何らかの倍数ににならないとうまくいかない？
     int blankY = 200; //縦方向の余白
@@ -183,11 +186,8 @@ void ofApp::draw(){
     */
     //粒子の上行
     
-    akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_LINES);
-    akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_POINTS);
-    akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_TRIANGLES);
-    akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_POINTS,10);
-    akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_POINTS,20);
+    
+    
     
     /*
     DrawBlueRect(0);
@@ -199,22 +199,29 @@ void ofApp::draw(){
      
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
-    if(bg.autoBeat(mili, BPM, margin)){
+    for(int i=0; i<5; i++){
+        if(bg[i].autoBeat(mili, BPM, margin)){
         //DrawManyCircle(0, 0, 0, 0);
-        miliNext = mili + milidiff;
+            miliNext[i] = mili + milidiff;
         //for(int i=0; i<NUM; i++)
-            //walker[i]->Reset();
+        //walker[i]->Reset();
+        }
+        
+        if(mili < miliNext[i]){
+            float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
+            //printf("fade = %f",fade);
+            if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
+            if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_POINTS,5,miliNext[i]-mili, milidiff);
+            if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_TRIANGLES,10,miliNext[i]-mili, milidiff);
+            if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_POINTS,10,miliNext[i]-mili, milidiff);
+            if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_POINTS,20, miliNext[i]-mili, milidiff);
+            
+            
+        }
     }
     
     //ちゃんとフェードさせるならクラスか配列を作る必要あり
-    if(mili < miliNext){
-        float fade = 1-(float)(miliNext-mili)/(float)milidiff;
-        //printf("fade = %f",fade);
-        
-        
-        
-        
-    }
+    
     
     
     for(int i=0; i<mynum; i++){
