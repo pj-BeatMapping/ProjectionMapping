@@ -7,6 +7,8 @@
 #include "ofxOsc.h"
 #include "Morohoshi.hpp"
 
+#include "ofxPostGlitch.h"
+
 #define PORT 8000//自分のポート番号
 
 class ofApp : public ofBaseApp{
@@ -17,6 +19,7 @@ public:
     void draw();
     
     void keyPressed(int key);
+    void keyReleased(int key);
     void mousePressed(int x, int y, int button);
 
     void DrawManyCircle(int num);
@@ -49,6 +52,10 @@ public:
     int beat_detect[7];
     //受信したFFT情報
     float lowValue,midValue,highValue;
+    
+    //グリッジ用
+    //グリッジ用
+    ofxPostGlitch myGlitch[15];
     
     Morohoshi morohoshi;
     

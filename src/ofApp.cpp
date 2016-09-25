@@ -90,6 +90,9 @@ void ofApp::setup(){
         mywarper[i]->setBottomLeftCornerPosition(ofPoint(x[i], y[i] + h[i]));
         mywarper[i]->setBottomRightCornerPosition(ofPoint(x[i] + w[i], y[i] + h[i]));
         mywarper[i]->setup();
+        
+        //グリッジ
+        myGlitch[i].setup(myfbo[i]);
     }
     
     
@@ -255,6 +258,7 @@ void ofApp::draw(){
             glPushMatrix();
             glMultMatrixf(mat.getPtr());
         {
+            myGlitch[i].generateFx();
             myfbo[i]->draw(0, 0);
         }
             glPopMatrix();
@@ -355,17 +359,184 @@ void ofApp::keyPressed(int key){
     }
     
     
-    //モロホシの映像
-    if (key == 'x') {
-        morohoshi.pattern1(x[0], y[0], w[0], h[0], beat_detect[0]);
-           }
-    if (key == 'y') {
-        morohoshi.pattern2(x[0], y[0], w[0], h[0], beat_detect[0]);
+    //グリッジ
+    if (key == '1') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, true);
+            cout << "グリッジ！！" << endl;
+        }
     }
-    if (key == 'z') {
-        morohoshi.pattern3(x[0], y[0], w[0], h[0], beat_detect[0]);
+    if (key == '2') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_GLOW			, true);
+        }
+    }
+    if (key == '3') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SHAKER			, true);
+        }
+    }
+    if (key == '4') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CUTSLIDER		, true);
+        }
+    }
+    if (key == '5') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_TWIST			, true);
+        }
+    }
+    if (key == '6') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_OUTLINE		, true);
+        }
+    }
+    if (key == '7') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_NOISE			, true);
+        }
+    }
+    if (key == '8') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SLITSCAN		, true);
+        }
+    }
+    if (key == '9') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SWELL			, true);
+        }
+    }
+    if (key == '0') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_INVERT			, true);
+        }
+    }
+    
+    
+    if (key == 'q') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_HIGHCONTRAST, true);        }
+    }
+    if (key == 'w') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUERAISE	, true);
+        }
+    }
+    if (key == 'e') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDRAISE	, true);
+        }
+    }
+    if (key == 'r') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENRAISE	, true);
+        }
+    }
+    if (key == 't') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUEINVERT	, true);
+        }
+    }
+    if (key == 'y') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDINVERT	, true);
+        }
+    }
+    if (key == 'u') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENINVERT	, true);        }
     }
 
+    
+}
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key){
+    if (key == '1') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, false);
+        }
+    }
+    if (key == '2') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_GLOW			, false);
+        }
+    }
+    if (key == '3') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SHAKER			, false);
+        }
+    }
+    if (key == '4') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CUTSLIDER		, false);
+        }
+    }
+    if (key == '5') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_TWIST			, false);
+        }
+    }
+    if (key == '6') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_OUTLINE		, false);
+        }
+    }
+    if (key == '7') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_NOISE			, false);
+        }
+    }
+    if (key == '8') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SLITSCAN		, false);
+        }
+    }
+    if (key == '9') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_SWELL			, false);
+        }
+    }
+    if (key == '0') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_INVERT			, false);
+        }
+    }
+    
+    
+    if (key == 'q') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_HIGHCONTRAST, false);        }
+    }
+    if (key == 'w') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUERAISE	, false);
+        }
+    }
+    if (key == 'e') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDRAISE	, false);
+        }
+    }
+    if (key == 'r') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENRAISE	, false);
+        }
+    }
+    if (key == 't') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUEINVERT	, false);
+        }
+    }
+    if (key == 'y') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDINVERT	, false);
+        }
+    }
+    if (key == 'u') {
+        for(int i = 0 ; i < 15;i++){
+            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENINVERT	, false);        }
+    }
+    
     
 }
 
