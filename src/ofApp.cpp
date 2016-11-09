@@ -16,16 +16,8 @@ int humanBeatCounter = 0;
 
 ofVboMesh mesh;
 
-//RandomWalker
-static const int NUM = 500;
-vector<RandomWalkerAkimoto*> walker;
-vector<RandomWalkerAkimoto*> walker2;
-vector<RandomWalkerAkimoto*> walker3;
-vector<RandomWalkerAkimoto*> walker4;
-vector<RandomWalkerAkimoto*> walker5;
-Spectrum sp[15];
-Compo cp[15];
-Akimoto akimoto = *new Akimoto();
+
+
 
 //ofImage entireImage = NULL; バグ
 
@@ -33,13 +25,34 @@ Akimoto akimoto = *new Akimoto();
 void ofApp::setup(){
     ofBackground(255, 255, 255);
     ofSetBackgroundAuto(false);
-    ofSetFrameRate( 60 );
+    ofSetFrameRate(30);
     ofSetVerticalSync( true );
     ofEnableSmoothing();
     
-    //OSC
-    receiver.setup(PORT);
+    //画面の混色の設定を加算合成にする
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
     
+    //キャプチャするムービーのサイズを指定
+    camWidth = ofGetWidth()/3; //3
+    camHeight = (2*camWidth)/3; //2
+    
+    //カメラの初期化
+    for(int i = 0 ; i < camNUM; i++){
+        vidGrabber[i].setVerbose(true);
+        vidGrabber[i].setDeviceID(i);
+        vidGrabber[i].initGrabber(camWidth, camHeight);
+        // vidGrabber[i].setDeviceID(i);
+        
+    }
+    //カメラのFBOの準備
+    for(int i = 0;i<camNUM;i++){
+        DrawFlg[i] = false;//フラグの初期化
+        RecFlg[i] = false;//フラグの初期化
+        counter[i] = 0;
+    }
+    
+
     
     //強制フルスク
     //ofToggleFullscreen();
@@ -48,11 +61,7 @@ void ofApp::setup(){
     drawLine = true;
     apple.load("apple.jpg");//写真の読み込み
     
-    //BeatGeneratorSetup
-    for(int i=0; i<5; i++){
-        bg[i] = *new BeatGenerator(BPM/60.0*1000 + (0.5 - flct)*BPM*margin/60*1000, flct);
-        BPM += 4;
-    }
+   
     
     int blankX = 20; //余白を作るとバグる、なぜ？もしかして領域の幅が何らかの倍数ににならないとうまくいかない？
     int blankY = 200; //縦方向の余白
@@ -95,58 +104,19 @@ void ofApp::setup(){
         mywarper[i]->setup();
         
         //グリッジ
-        myGlitch[i].setup(myfbo[i]);
+        effectGlitch.myGlitch[i].setup(myfbo[i]);
     }
     
-    
-    //AkimotoSetup
-    
-    for(int i=0; i<NUM; i++)
-        walker.push_back(new RandomWalkerAkimoto(x[0],y[0],w[0]*3,h[0]));
-    for(int i=0; i<NUM; i++)
-        walker2.push_back(new RandomWalkerAkimoto(x[6],y[6],w[0]*3,h[0]));
-    for(int i=0; i<NUM; i++)
-        walker3.push_back(new RandomWalkerAkimoto(x[3],y[3],w[0]*3,h[0]));
-    for(int i=0; i<NUM; i++)
-        walker4.push_back(new RandomWalkerAkimoto(x[9],y[9],w[0]*3,h[0]));
-    for(int i=0; i<NUM; i++)
-        walker5.push_back(new RandomWalkerAkimoto(x[12],y[12],w[0]*3,h[0]));
-    
-    for(int i=0;i<15;i++){
-        sp[i] = *new Spectrum(x[i],y[i],w[i],h[i]);
-        cp[i] = *new Compo(x[i],y[i],w[i],h[i]);
-    }
-    //akimoto.particles = new Particles(10,x[1],y[1],w[1],h[1]);
-    //akimoto.PerlinNoiseSetup(x[6],y[6],w[6]*3,h[6]);
-    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
-    //OSCの受信
-    while (receiver.hasWaitingMessages()) {
-        //心拍情報の受信
-        ofxOscMessage OscBeat;
-        receiver.getNextMessage(&OscBeat);
-        
-        if (OscBeat.getAddress() == "/Beat") {
-            for(int i = 0; i < 7 ; i++){
-                 beat_detect[i] =  OscBeat.getArgAsInt32(i);
-            }
-        }
-        //FFTの解析データの受信
-        ofxOscMessage OscFFT;
-        receiver.getNextMessage(&OscFFT);
-        
-        if (OscFFT.getAddress() == "/Fft") {
-            lowValue = OscFFT.getArgAsFloat(0);
-            midValue = OscFFT.getArgAsFloat(1);
-            highValue = OscFFT.getArgAsFloat(2);
-            }
-
-        
+    //カメラ映像のupdate
+    for(int i = 0 ; i < camNUM; i++){
+        vidGrabber[i].update();
     }
+    
     
     
     if(ofGetFrameNum()){
@@ -181,167 +151,23 @@ void ofApp::draw(){
     //if(entireImage!=NULL)entireImage->draw(0,0);
     ofSetColor(0, 0, 0, 0); //半透明の黒（背景色）
     ofRect(0, 0, ofGetWidth(), ofGetHeight()); //画面と同じ大きさの四角形を描画
-    /*
-    //複数の円の表示
-    DrawManyCircle(10); //0-20の番号を入れる
     
-    //ランダムな色の表示
-    DrawColorfulRect(3);
-    
-     //perlin
-     akimoto.PerlinNoiseUpdate();
-     akimoto.PerlinNoiseDraw();
-     
-    
-    */
-    //粒子の上行
-    
-    
-    
-    
-    /*
-    DrawBlueRect(0);
-    DrawBlueRect(3);
-    DrawBlueRect(6);
-    DrawBlueRect(9);
-    DrawBlueRect(12);
-    */
-    
-    
+
+    //カメラの映像を描画
+    ofSetColor(0xffffff);
+    for(int i = 0 ; i < camNUM; i++){
+        if(i>=3){
+            vidGrabber[i].draw((i-3)*camWidth,camHeight);
+        }
+        vidGrabber[i].draw(i*camWidth,0);
+    }
+
     
     //ここの条件をOSCが送られてきた時にすればOK
     int mili = ofGetElapsedTimeMillis();//起動してからの時間を取得
-    for(int i=0; i<5; i++){
-        if(beat_detect[i] == 1/*bg[i].autoBeat(mili, BPM, margin)*/){
-        //DrawManyCircle(0, 0, 0, 0);
-            miliNext[i] = mili + milidiff;
-        //for(int i=0; i<NUM; i++)
-        //walker[i]->Reset();
-        }
-        if(nowKey == 'z'){
-        if(mili < miliNext[i]){
-            float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
-            //printf("fade = %f",fade);
-            if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
-            if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_LINES,5,miliNext[i]-mili, milidiff);
-            if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
-            if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_LINES,10,miliNext[i]-mili, milidiff);
-            if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_LINES,20, miliNext[i]-mili, milidiff);
-            
-            
-        }
-        }
-        
-        if(nowKey == 'x'){
-            if(mili < miliNext[i]){
-                float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
-                //printf("fade = %f",fade);
-                if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
-                if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
-                if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
-                if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_POINTS,20,miliNext[i]-mili, milidiff);
-                if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_POINTS,20, miliNext[i]-mili, milidiff);
-                
-                
-            }
-        }
-        
-        if(nowKey == 'c'){
-            if(mili < miliNext[i]){
-                float fade = 1-(float)(miliNext[i]-mili)/(float)milidiff;
-                //printf("fade = %f",fade);
-                if(i == 0)akimoto.RandomWalkerUp(walker, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
-                if(i==1)akimoto.RandomWalkerUp(walker2, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
-                if(i==2)akimoto.RandomWalkerUp(walker3, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
-                if(i==3)akimoto.RandomWalkerUp(walker4, OF_PRIMITIVE_TRIANGLES,20,miliNext[i]-mili, milidiff);
-                if(i==4)akimoto.RandomWalkerUp(walker5, OF_PRIMITIVE_TRIANGLES,20, miliNext[i]-mili, milidiff);
-                
-                
-            }
-        }
-        
-        if(nowKey == 'v'){
-            if(i==0){
-                for(int j=0; j<3; j++)
-                sp[i*3+j].draw(miliNext[i]-mili, milidiff);
-            }
-            if(i==1){
-                for(int j=0; j<3; j++)
-                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
-            }
-            if(i==2){
-                for(int j=0; j<3; j++)
-                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
-            }
-            if(i==3){
-                for(int j=0; j<3; j++)
-                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
-            }
-            if(i==4){
-                for(int j=0; j<3; j++)
-                    sp[i*3+j].draw(miliNext[i]-mili, milidiff);
-            }
-        }
-        
-        if(nowKey == 'b'){
-            if(i==0){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
-            }
-            if(i==1){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
-            }
-            if(i==2){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
-            }
-            if(i==3){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
-            }
-            if(i==4){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff);
-            }
-        }
-        
-        if(nowKey == 'n'){
-            if(i==0){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff, lowValue, midValue, highValue);
-            }
-            if(i==1){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
-            }
-            if(i==2){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
-            }
-            if(i==3){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
-            }
-            if(i==4){
-                for(int j=0; j<3; j++)
-                    cp[i*3+j].tripleDraw(miliNext[i]-mili, milidiff,lowValue, midValue, highValue);
-            }
-        }
-    }
-    
-    //ちゃんとフェードさせるならクラスか配列を作る必要あり
-    
-    
-    //入力した時の演出, 4に成ったら終わる？
-    if(beat_detect[0] > 0){
-        //円が徐々に大きくなるクラスを作成
-        ofSetColor(255);
-        ofDrawCircle(ofGetWidth()/2, ofGetHeight(), 30);
-    }
-    
 
     
+    //白色エフェクト
     if(nowKey == 'm'){
         ofSetColor(255);
         SliderCounter++;
@@ -408,7 +234,7 @@ void ofApp::draw(){
             glPushMatrix();
             glMultMatrixf(mat.getPtr());
         {
-            myGlitch[i].generateFx();
+            effectGlitch.myGlitch[i].generateFx();
             myfbo[i]->draw(0, 0);
         }
             glPopMatrix();
@@ -509,196 +335,20 @@ void ofApp::keyPressed(int key){
     }
     
     
-    //演出切りかえ
-    if(key == 'z' || key == 'x' || key == 'c' || key == 'v' || key == 'b' || key == 'n' || key == 'm'){
-        //z -> line
-        //x -> point
-        //c -> triangle
-        //v -> rect spectrum
-        //b -> circle spectrum
-        //n -> fft circle
-        //m -> slider
-        nowKey = key;
-    }
+    //入力keyをnowKeyに格納
+    KeyNum(key);
     
-    //グリッジ
-    if (key == '1') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, true);
-            //cout << "グリッジ！！" << endl;
-        }
-    }
-    if (key == '2') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_GLOW			, true);
-        }
-    }
-    if (key == '3') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_SHAKER			, true);
-        }
-    }
-    if (key == '4') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CUTSLIDER		, true);
-        }
-    }
-    if (key == '5') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_TWIST			, true);
-        }
-    }
-    if (key == '6') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_OUTLINE		, true);
-        }
-    }
-    if (key == '7') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_NOISE			, true);
-        }
-    }
-    if (key == '8') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_SLITSCAN		, true);
-        }
-    }
-    if (key == '9') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_SWELL			, true);
-        }
-    }
-    if (key == '0') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_INVERT			, true);
-        }
-    }
+    //Glitchのエフェクトの開始
+    effectGlitch.EffectStart(key);
     
     
-    if (key == 'q') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_HIGHCONTRAST, true);        }
-    }
-    if (key == 'w') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUERAISE	, true);
-        }
-    }
-    if (key == 'e') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDRAISE	, true);
-        }
-    }
-    if (key == 'r') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENRAISE	, true);
-        }
-    }
-    if (key == 't') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUEINVERT	, true);
-        }
-    }
-    if (key == 'y') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDINVERT	, true);
-        }
-    }
-    if (key == 'u') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENINVERT	, true);        }
-    }
-
     
 }
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    if (key == '1') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CONVERGENCE	, false);
-        }
-    }
-    if (key == '2') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_GLOW			, false);
-        }
-    }
-    if (key == '3') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_SHAKER			, false);
-        }
-    }
-    if (key == '4') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CUTSLIDER		, false);
-        }
-    }
-    if (key == '5') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_TWIST			, false);
-        }
-    }
-    if (key == '6') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_OUTLINE		, false);
-        }
-    }
-    if (key == '7') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_NOISE			, false);
-        }
-    }
-    if (key == '8') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_SLITSCAN		, false);
-        }
-    }
-    if (key == '9') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_SWELL			, false);
-        }
-    }
-    if (key == '0') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_INVERT			, false);
-        }
-    }
-    
-    
-    if (key == 'q') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_HIGHCONTRAST, false);        }
-    }
-    if (key == 'w') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUERAISE	, false);
-        }
-    }
-    if (key == 'e') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDRAISE	, false);
-        }
-    }
-    if (key == 'r') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENRAISE	, false);
-        }
-    }
-    if (key == 't') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_BLUEINVERT	, false);
-        }
-    }
-    if (key == 'y') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_REDINVERT	, false);
-        }
-    }
-    if (key == 'u') {
-        for(int i = 0 ; i < 15;i++){
-            myGlitch[i].setFx(OFXPOSTGLITCH_CR_GREENINVERT	, false);        }
-    }
-    
+    //Glitchのエフェクトの停止
+    effectGlitch.EffectStop(key);
+        
     
 }
 
@@ -748,3 +398,9 @@ void ofApp::mousePressed(int x, int y, int button){//一度目のクリックで
     
     
 }
+//--------------------------------------------------------------
+void ofApp::KeyNum(int key){
+    nowKey = key;
+    
+}
+
