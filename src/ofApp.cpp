@@ -208,7 +208,7 @@ void ofApp::draw(){
         kariImage[i].grabScreen(x[i], y[i], w[i], h[i]);
         //kariImage[i]->saveImage("test3.png");
     }
-    
+    	
     
     //entireImage->grabScreen(0, 0, ofGetWidth(), ofGetHeight());
     
